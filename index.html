@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <title>Dope Test</title>
+
+    <style>
+
+      @font-face {
+          font-family: 'IBMPlexMono';
+          src: url(IBMPlexMono-Regular.woff) format("woff");
+          font-weight: normal;
+          font-style: normal;
+      } 
+      
+      body {
+        background-color: black;
+        text-align: center;
+        font-family: IBMPlexMono;
+        font-size: 15px;
+        color: white;
+        padding: 10px;
+      }
+
+      #root {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
+
+      button {
+        font-family: 'IBMPlexMono';
+        position: absolute;
+        bottom: 20px;
+        border: none;
+        color: white;
+        height: 30px;
+        width: 96px;
+        transform: translateX(-48px);
+        font-size: 15px;
+        z-index: 1;
+      }
+
+      #stop {
+        background-color: red;
+      }
+
+      #start {
+        background-color: green;
+      }
+
+      #dopes {
+        background-color: red;
+        position: absolute;
+        top: 20px;
+        width: 140px;
+        transform: translateX(-70px);
+        padding: 7px;
+      }
+
+  </style>
+
+  <script>
+    satrted = false;
+
+    function startClicked(){
+      started = true;
+      document.getElementById("start").hidden = true;
+      document.getElementById("stop").hidden = false;
+
+      startTest();
+    }
+
+    function startTest()
+    {
+      var width =  window.innerWidth;
+      var height = window.outerHeight;
+      var i = 0;
+      var max = 600;
+      var prevUpdate = null;
+      var prevCount = 0;
+      var root = document.getElementById("root");
+
+      root.innerText = "";
+
+      var start =  Date.now();
+
+      var func = () => {
+             var span = document.createElement("span");
+             span.style.position = "absolute";
+
+             var top = Math.round(Math.random()*height);
+             var left = Math.round(Math.random()*width);
+             var angle  = Math.round(Math.random()*360);
+             var color = "rgb(" + 
+               Math.round(Math.random()*255) + ","+  
+               Math.round(Math.random()*255) + "," +
+               Math.round(Math.random()*255) + ")";
+
+             span.style.top = top+"px";
+             span.style.left = left+"px";
+             span.style.transform = "rotate("+angle+"deg)";
+             span.style.color = color;
+             span.innerText = "Dope";
+
+             root.appendChild(span);
+
+             if (i > max){
+               root.removeChild(root.childNodes[0]);
+
+               if (!prevUpdate) {
+                  prevUpdate = Date.now();
+                  prevCount = i;
+               }
+               
+               var diff = Date.now() - prevUpdate;
+               
+               if (diff >= 500) {
+                  document.getElementById("dopes").innerText = ((i - prevCount) / diff * 1000).toFixed(2) + " Dopes/s";
+                  prevUpdate = Date.now();
+                  prevCount = i;
+               }
+             }
+
+             if (started)
+              setTimeout(func, 0);
+             
+             i++; 
+
+          }
+
+        setTimeout(func, 0);
+    }
+
+    function stopClicked(){
+      started = false;
+      document.getElementById("start").hidden = false;
+      document.getElementById("stop").hidden = true;
+    }
+
+  </script>
+
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root">
+    </div>
+    <span id="dopes"></span>
+    <button id="start" onclick="startClicked()">@ Start</button>
+    <button id="stop" onclick="stopClicked()" hidden="true">@ Break</button>
+  </body>
+</html>
