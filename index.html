@@ -79,6 +79,7 @@
 
     var accum = 0;
     var accumN = 0;
+    var funcG;
 
     function startTest()
     {
@@ -89,6 +90,9 @@
       var prevUpdate = null;
       var prevCount = 0;
       var root = document.getElementById("root");
+      
+      accum = 0;
+      accumN = 0;
 
       root.innerText = "";
 
@@ -115,7 +119,7 @@
              root.appendChild(span);
 
              if (i > max){
-               root.removeChild(root.childNodes[0]);
+               root.removeChild(root.childNodes[0])
 
                if (!prevUpdate) {
                   prevUpdate = Date.now();
@@ -135,11 +139,14 @@
              }
 
              if (started)
-              setTimeout(func, 0);
-             
+               window.postMessage("z", "*");
+              //setTimeout(func, 0);
+
              i++; 
 
           }
+
+        funcG = func;
 
         setTimeout(func, 0);
     }
@@ -150,6 +157,8 @@
       document.getElementById("stop").hidden = true;
       document.getElementById("dopes").innerText = (accum/accumN).toFixed(2)  + " Dopes/s (AVG)";
     }
+
+    window.addEventListener("message", () => funcG(), true);
 
   </script>
 
