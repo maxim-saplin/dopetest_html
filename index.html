@@ -58,8 +58,8 @@
         background-color: red;
         position: absolute;
         top: 20px;
-        width: 140px;
-        transform: translateX(-70px);
+        width: 180px;
+        transform: translateX(-90px);
         padding: 7px;
       }
 
@@ -72,9 +72,13 @@
       started = true;
       document.getElementById("start").hidden = true;
       document.getElementById("stop").hidden = false;
+      document.getElementById("dopes").hidden = false;
 
       startTest();
     }
+
+    var accum = 0;
+    var accumN = 0;
 
     function startTest()
     {
@@ -121,7 +125,10 @@
                var diff = Date.now() - prevUpdate;
                
                if (diff >= 500) {
-                  document.getElementById("dopes").innerText = ((i - prevCount) / diff * 1000).toFixed(2) + " Dopes/s";
+                  var val = ((i - prevCount) / diff * 1000);
+                  accum += val;
+                  accumN++;
+                  document.getElementById("dopes").innerText = val.toFixed(2)  + " Dopes/s";
                   prevUpdate = Date.now();
                   prevCount = i;
                }
@@ -141,6 +148,7 @@
       started = false;
       document.getElementById("start").hidden = false;
       document.getElementById("stop").hidden = true;
+      document.getElementById("dopes").innerText = (accum/accumN).toFixed(2)  + " Dopes/s (AVG)";
     }
 
   </script>
@@ -150,7 +158,7 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root">
     </div>
-    <span id="dopes"></span>
+    <span id="dopes" hidden="true"></span>
     <button id="start" onclick="startClicked()">@ Start</button>
     <button id="stop" onclick="stopClicked()" hidden="true">@ Break</button>
   </body>
