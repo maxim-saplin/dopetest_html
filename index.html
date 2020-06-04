@@ -77,38 +77,40 @@
       startTest();
     }
 
-    var accum = 0;
-    var accumN = 0;
-    var funcG;
+    let accum = 0;
+    let accumN = 0;
+    let funcG;
 
     function startTest()
     {
-      var width =  window.innerWidth;
-      var height = window.outerHeight;
-      var i = 0;
-      var max = 600;
-      var prevUpdate = null;
-      var prevCount = 0;
-      var root = document.getElementById("root");
+      rand.init(0);
+      
+      let width =  window.innerWidth;
+      let height = window.outerHeight;
+      let i = 0;
+      let max = 600;
+      let prevUpdate = null;
+      let prevCount = 0;
+      let root = document.getElementById("root");
       
       accum = 0;
       accumN = 0;
 
       root.innerText = "";
 
-      var start =  Date.now();
+      let start =  Date.now();
 
-      var func = () => {
-             var span = document.createElement("span");
+      let func = () => {
+             let span = document.createElement("span");
              span.style.position = "absolute";
 
-             var top = Math.round(Math.random()*height);
-             var left = Math.round(Math.random()*width);
-             var angle  = Math.round(Math.random()*360);
-             var color = "rgb(" + 
-               Math.round(Math.random()*255) + ","+  
-               Math.round(Math.random()*255) + "," +
-               Math.round(Math.random()*255) + ")";
+             let top = Math.round(rand.next()*height);//Math.round(Math.random()*height);
+             let left = Math.round(rand.next()*width);//Math.round(Math.random()*width);
+             let angle  = Math.round(rand.next()*width);//Math.round(Math.random()*width);
+             let color = "rgb(" + 
+               Math.round(rand.next()*255) + ","+  
+               Math.round(rand.next()*255) + "," +
+               Math.round(rand.next()*255) + ")";
 
              span.style.top = top+"px";
              span.style.left = left+"px";
@@ -126,10 +128,10 @@
                   prevCount = i;
                }
                
-               var diff = Date.now() - prevUpdate;
+               let diff = Date.now() - prevUpdate;
                
                if (diff >= 500) {
-                  var val = ((i - prevCount) / diff * 1000);
+                  let val = ((i - prevCount) / diff * 1000);
                   accum += val;
                   accumN++;
                   document.getElementById("dopes").innerText = val.toFixed(2)  + " Dopes/s";
@@ -159,6 +161,65 @@
     }
 
     window.addEventListener("message", () => funcG(), true);
+
+
+    const rand = {
+       MBIG : 2000000000,
+       MSEED : 161803398,
+       SeedArray : new Array(56),
+       inext : null,
+       inextp : null,
+       init : function(Seed) {
+            let ii;
+            let mj, mk;
+
+            let subtraction = Math.abs(Seed);
+            mj = this.MSEED - subtraction;
+            this.SeedArray[55] = mj;
+            mk = 1;
+            for (let i = 1; i < 55; i++)
+            {  
+                ii = (21 * i) % 55;
+                this.SeedArray[ii] = mk;
+                mk = mj - mk;
+                if (mk < 0) mk += this.MBIG;
+                mj = this.SeedArray[ii];
+            }
+            for (let k = 1; k < 5; k++)
+            {
+                for (let i = 1; i < 56; i++)
+                {
+                    this.SeedArray[i] -= this.SeedArray[1 + (i + 30) % 55];
+                    if (this.SeedArray[i] < 0) this.SeedArray[i] += this.MBIG;
+                }
+            }
+            this.inext = 0;
+            this.inextp = 21;
+        },
+        InternalSample : function() {
+            let retVal;
+            let locINext = this.inext;
+            let locINextp = this.inextp;
+
+            if (++locINext >= 56) locINext = 1;
+            if (++locINextp >= 56) locINextp = 1;
+
+            retVal = this.SeedArray[locINext] - this.SeedArray[locINextp];
+
+            if (retVal == this.MBIG) retVal--;
+            if (retVal < 0) retVal += this.MBIG;
+
+            this.SeedArray[locINext] = retVal;
+
+            this.inext = locINext;
+            this.inextp = locINextp;
+
+            return retVal;
+        },
+        next : function() {
+          return (this.InternalSample() * (1.0 / this.MBIG));
+        }
+    }
 
   </script>
 
