@@ -98,7 +98,7 @@
 
       root.innerText = "";
 
-      let start =  Date.now();
+      //let start =  Date.now();
 
       let func = () => {
              let span = document.createElement("span");
@@ -206,7 +206,7 @@
 
             retVal = this.SeedArray[locINext] - this.SeedArray[locINextp];
 
-            if (retVal == this.MBIG) retVal--;
+            if (retVal === this.MBIG) retVal--;
             if (retVal < 0) retVal += this.MBIG;
 
             this.SeedArray[locINext] = retVal;
